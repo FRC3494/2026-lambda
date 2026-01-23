@@ -1,19 +1,17 @@
 package frc.robot.subsystems.climber;
 
-import org.littletonrobotics.junction.Logger;
-
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.climber.ClimberIO.ClimberMode;
+import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
   SparkMax climberMotor;
@@ -51,7 +49,7 @@ public class Climber extends SubsystemBase {
       // if (inputs.targetPosition != prevTicks) {
       climberMotor
           .getClosedLoopController()
-          .setReference(
+          .setSetpoint(
               inputs.targetPosition, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0);
       // }
     }

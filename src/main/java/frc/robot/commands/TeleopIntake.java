@@ -1,11 +1,8 @@
 package frc.robot.commands;
 
-import java.util.function.BooleanSupplier;
-
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants;
 import frc.robot.Constants.LEDs.LEDLightPattern;
 import frc.robot.OI;
@@ -13,6 +10,8 @@ import frc.robot.subsystems.GroundIntake;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.SuperStructure.Arm;
 import frc.robot.subsystems.SuperStructure.Intake;
+import java.util.function.BooleanSupplier;
+import org.littletonrobotics.junction.Logger;
 
 public class TeleopIntake extends Command {
   private Intake intake;
@@ -103,9 +102,9 @@ public class TeleopIntake extends Command {
         || (arm.getTargetPosition()
             == Constants.Presets.armOuttakeL3 + Constants.Presets.globalArmOffset)) {
       if (intakePower > 0) {
-        leds.setPattern(LEDLightPattern.DEPOSITED).schedule();
+        CommandScheduler.getInstance().schedule(leds.setPattern(LEDLightPattern.DEPOSITED));
       } else if (lastIntakePower > 0 && OI.getIntakePower(coralIntendedForL1.getAsBoolean()) == 0) {
-        leds.setPattern(LEDLightPattern.NONE).schedule();
+        CommandScheduler.getInstance().schedule(leds.setPattern(LEDLightPattern.NONE));
       }
     }
 

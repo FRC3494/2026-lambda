@@ -1,22 +1,20 @@
 package frc.robot.subsystems;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import org.littletonrobotics.junction.Logger;
 
 public class GroundIntake extends SubsystemBase {
   private SparkFlex pivotMotor;
@@ -88,7 +86,7 @@ public class GroundIntake extends SubsystemBase {
   }
 
   public void setIntakePosition(double position) {
-    // pivotMotor.getClosedLoopController().setReference(position, SparkBase.ControlType.kPosition);
+    // pivotMotor.getClosedLoopController().setSetpoint(position, SparkBase.ControlType.kPosition);
     pivotController.setSetpoint(position);
     targetPosition = position;
   }

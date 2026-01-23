@@ -1,10 +1,9 @@
 package frc.robot.commands;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.OI;
 import frc.robot.subsystems.SuperStructure.Elevator;
+import org.littletonrobotics.junction.Logger;
 
 public class TeleopElevator extends Command {
   Elevator elevator;

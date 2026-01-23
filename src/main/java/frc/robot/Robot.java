@@ -13,16 +13,7 @@
 
 package frc.robot;
 
-import org.littletonrobotics.junction.LogFileUtil;
-import org.littletonrobotics.junction.LoggedRobot;
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
-import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGReader;
-import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -34,6 +25,13 @@ import frc.robot.Constants.LEDs.LEDLightPattern;
 import frc.robot.subsystems.LoggedMitocandria;
 import frc.robot.subsystems.drive.ModuleIOSparkMax;
 import frc.robot.util.Elastic;
+import org.littletonrobotics.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedPowerDistribution;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 // import org.littletonrobotics.urcl.URCL;
 
@@ -139,7 +137,8 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {
     // robotContainer.drive.canReadTags = false;
-    robotContainer.leds.setPattern(LEDLightPattern.DISABLED).schedule();
+    CommandScheduler.getInstance()
+        .schedule(robotContainer.leds.setPattern(LEDLightPattern.DISABLED));
   }
 
   /** This function is called periodically when disabled. */
@@ -151,7 +150,7 @@ public class Robot extends LoggedRobot {
   public void autonomousInit() {
     ModuleIOSparkMax.setGearRatio(Constants.Drivetrain.L1_GEAR_RATIO);
     robotContainer.drive.rezeroModulesRelativeEncoders(); // re-zero on auto init
-    robotContainer.leds.setPattern(LEDLightPattern.NONE).schedule();
+    CommandScheduler.getInstance().schedule(robotContainer.leds.setPattern(LEDLightPattern.NONE));
     // robotContainer.drive.canReadTags = true;
     Elastic.selectTab("Autonomous");
 
@@ -162,7 +161,7 @@ public class Robot extends LoggedRobot {
 
     autonomousCommand = robotContainer.getAutonomousCommand();
     if (autonomousCommand != null) {
-      autonomousCommand.schedule();
+      CommandScheduler.getInstance().schedule(autonomousCommand);
     }
   }
 
@@ -179,7 +178,7 @@ public class Robot extends LoggedRobot {
     // this line or comment it out.
     // robotContainer.drive.canReadTags = true;
     ModuleIOSparkMax.setGearRatio(Constants.Drivetrain.L1_GEAR_RATIO);
-    robotContainer.leds.setPattern(LEDLightPattern.NONE).schedule();
+    CommandScheduler.getInstance().schedule(robotContainer.leds.setPattern(LEDLightPattern.NONE));
     // ! Uncomment for comp
     Elastic.selectTab("Teleoperated");
 
@@ -198,7 +197,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopPeriodic() {
     if (!robotContainer.arm.groundIntaking && robotContainer.arm.bufferedCommand != null) {
-      robotContainer.arm.bufferedCommand.schedule();
+      CommandScheduler.getInstance().schedule(robotContainer.arm.bufferedCommand);
       robotContainer.arm.bufferedCommand = null;
     }
 

@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -630,31 +631,33 @@ public class RobotContainer {
         .rising()
         .ifHigh(
             () -> {
-              new InstantCommand(
-                      () -> {
-                        if (arm.defenseMode == false) {
-                          arm.defenseMode = true;
-                          groundIntake.hoverPosition = Constants.Presets.groundIntakeStore;
-                          Constants.Presets.defenseDelay = 0.5;
-                        } else {
-                          arm.defenseMode = false;
-                          groundIntake.hoverPosition = Constants.Presets.groundIntakeHover;
-                          Constants.Presets.defenseDelay = 0.0;
-                        }
-                      })
-                  .ignoringDisable(false)
-                  .schedule();
+              CommandScheduler.getInstance()
+                  .schedule(
+                      new InstantCommand(
+                              () -> {
+                                if (arm.defenseMode == false) {
+                                  arm.defenseMode = true;
+                                  groundIntake.hoverPosition = Constants.Presets.groundIntakeStore;
+                                  Constants.Presets.defenseDelay = 0.5;
+                                } else {
+                                  arm.defenseMode = false;
+                                  groundIntake.hoverPosition = Constants.Presets.groundIntakeHover;
+                                  Constants.Presets.defenseDelay = 0.0;
+                                }
+                              })
+                          .ignoringDisable(false));
             });
     OI.toggleDistanceSensor()
         .rising()
         .ifHigh(
             () -> {
-              new InstantCommand(
-                      () -> {
-                        groundIntake.wanttoPOP = !groundIntake.wanttoPOP;
-                      })
-                  .ignoringDisable(false)
-                  .schedule();
+              CommandScheduler.getInstance()
+                  .schedule(
+                      new InstantCommand(
+                              () -> {
+                                groundIntake.wanttoPOP = !groundIntake.wanttoPOP;
+                              })
+                          .ignoringDisable(false));
             });
 
     // Coral Align
@@ -771,7 +774,7 @@ public class RobotContainer {
                                 arm.getPosition(), Constants.Presets.armAlgeaL3, 0.1);
                           }));
               if (!arm.groundIntaking) {
-                l3AlgeaCommand.schedule();
+                CommandScheduler.getInstance().schedule(l3AlgeaCommand);
               } else {
                 arm.bufferedCommand = l3AlgeaCommand;
               }
@@ -788,7 +791,7 @@ public class RobotContainer {
                             arm.setTargetAngle(Constants.Presets.armOuttakeL3, 0);
                           }));
               if (!arm.groundIntaking) {
-                l3AlgeaCommand.schedule();
+                CommandScheduler.getInstance().schedule(l3AlgeaCommand);
               } else {
                 arm.bufferedCommand = l3AlgeaCommand;
               }
@@ -810,7 +813,7 @@ public class RobotContainer {
                                 arm.getPosition(), Constants.Presets.armOuttakeL3, 0.1);
                           }));
               if (!arm.groundIntaking) {
-                l3CoralCommand.schedule();
+                CommandScheduler.getInstance().schedule(l3CoralCommand);
               } else {
                 arm.bufferedCommand = l3CoralCommand;
               }
@@ -833,7 +836,7 @@ public class RobotContainer {
                                 arm.getPosition(), Constants.Presets.armAlgeaL2, 0.1);
                           }));
               if (!arm.groundIntaking) {
-                l2AlgeaCommand.schedule();
+                CommandScheduler.getInstance().schedule(l2AlgeaCommand);
               } else {
                 arm.bufferedCommand = l2AlgeaCommand;
               }
@@ -850,7 +853,7 @@ public class RobotContainer {
                             arm.setTargetAngle(Constants.Presets.armOuttakeL2, 0);
                           }));
               if (!arm.groundIntaking) {
-                l2AlgeaCommand.schedule();
+                CommandScheduler.getInstance().schedule(l2AlgeaCommand);
               } else {
                 arm.bufferedCommand = l2AlgeaCommand;
               }
@@ -872,7 +875,7 @@ public class RobotContainer {
                                 arm.getPosition(), Constants.Presets.armOuttakeL2, 0.1);
                           }));
               if (!arm.groundIntaking) {
-                l2CoralCommand.schedule();
+                CommandScheduler.getInstance().schedule(l2CoralCommand);
               } else {
                 arm.bufferedCommand = l2CoralCommand;
               }
@@ -910,12 +913,13 @@ public class RobotContainer {
         .rising()
         .ifHigh(
             () -> {
-              new InstantCommand(
-                      () -> {
-                        elevator.setElevatorPosition(Constants.Presets.liftIntake);
-                        arm.setTargetAngle(Constants.Presets.armSafePosition, 0);
-                      })
-                  .schedule();
+              CommandScheduler.getInstance()
+                  .schedule(
+                      new InstantCommand(
+                          () -> {
+                            elevator.setElevatorPosition(Constants.Presets.liftIntake);
+                            arm.setTargetAngle(Constants.Presets.armSafePosition, 0);
+                          }));
             });
     OI.l1Test()
         .rising()
@@ -934,7 +938,7 @@ public class RobotContainer {
                                 arm.getPosition(), Constants.Presets.L1armtest, 0.1);
                           }));
               if (!arm.groundIntaking) {
-                l1TestCommand.schedule();
+                CommandScheduler.getInstance().schedule(l1TestCommand);
               } else {
                 arm.bufferedCommand = l1TestCommand;
               }
@@ -966,7 +970,7 @@ public class RobotContainer {
                             AutoAlignDesitationDeterminer.placingAtL1 = false;
                           }));
               if (!arm.groundIntaking) {
-                intakeCommand.schedule();
+                CommandScheduler.getInstance().schedule(intakeCommand);
               } else {
                 arm.bufferedCommand = intakeCommand;
               }
@@ -979,22 +983,24 @@ public class RobotContainer {
         .rising()
         .ifHigh(
             () -> {
-              Commands.sequence(
-                      new InstantCommand(
-                          () -> {
-                            elevator.setElevatorPosition(Constants.Presets.liftIntake);
-                            arm.setTargetAngle(Constants.Presets.armProcessor, 0);
-                          }),
-                      new WaitUntilCommand(
-                          () ->
-                              SeanMathUtil.compareArmPosition(
-                                  arm.getPosition(), Constants.Arm.safePosition, false)),
-                      new InstantCommand(
-                          () -> {
-                            groundIntake.setIntakePosition(Constants.Presets.groundIntakeStore);
-                          }))
-                  .ignoringDisable(false)
-                  .schedule();
+              CommandScheduler.getInstance()
+                  .schedule(
+                      Commands.sequence(
+                              new InstantCommand(
+                                  () -> {
+                                    elevator.setElevatorPosition(Constants.Presets.liftIntake);
+                                    arm.setTargetAngle(Constants.Presets.armProcessor, 0);
+                                  }),
+                              new WaitUntilCommand(
+                                  () ->
+                                      SeanMathUtil.compareArmPosition(
+                                          arm.getPosition(), Constants.Arm.safePosition, false)),
+                              new InstantCommand(
+                                  () -> {
+                                    groundIntake.setIntakePosition(
+                                        Constants.Presets.groundIntakeStore);
+                                  }))
+                          .ignoringDisable(false));
             });
     OI.lolipop()
         .rising()
@@ -1008,7 +1014,7 @@ public class RobotContainer {
                             arm.setTargetAngle(Constants.Presets.armLoliPop, 0);
                           }));
               if (!arm.groundIntaking) {
-                lolipop.schedule();
+                CommandScheduler.getInstance().schedule(lolipop);
               } else {
                 arm.bufferedCommand = lolipop;
               }
@@ -1035,124 +1041,130 @@ public class RobotContainer {
               }
               System.out.println(drive.coralIntededforL1);
               if (drive.coralIntededforL1) {
-                Commands.sequence(
-                        leds.setPattern(LEDLightPattern.INTAKING),
-                        new InstantCommand(
-                            () -> {
-                              arm.groundIntaking = true;
-                              if (arm.getTargetPosition()
-                                  == Constants.Presets.armIntakeAlt
-                                      + Constants.Presets.globalArmOffset) {
-                                elevator.setElevatorPosition(Constants.Presets.liftOuttakeL2);
-                                // Constants.Presets.defenseDelay = 2;
-                              } else {
-                                elevator.setElevatorPosition(Constants.Presets.liftIntake);
-                                // Constants.Presets.defenseDelay = 0;
-                              }
+                CommandScheduler.getInstance()
+                    .schedule(
+                        Commands.sequence(
+                            leds.setPattern(LEDLightPattern.INTAKING),
+                            new InstantCommand(
+                                () -> {
+                                  arm.groundIntaking = true;
+                                  if (arm.getTargetPosition()
+                                      == Constants.Presets.armIntakeAlt
+                                          + Constants.Presets.globalArmOffset) {
+                                    elevator.setElevatorPosition(Constants.Presets.liftOuttakeL2);
+                                    // Constants.Presets.defenseDelay = 2;
+                                  } else {
+                                    elevator.setElevatorPosition(Constants.Presets.liftIntake);
+                                    // Constants.Presets.defenseDelay = 0;
+                                  }
 
-                              arm.setTargetAngle(Constants.Presets.armSafePosition, 0);
-                              groundIntake.setIntakePosition(Constants.Presets.groundIntakeIntake);
-                            }),
-                        new WaitUntilCommand(
-                            () -> {
-                              return SeanMathUtil.comparePosition(
-                                  groundIntake.getPivotPosition(),
-                                  Constants.Presets.groundIntakeIntake,
-                                  0.15);
-                            }),
-                        new InstantCommand(
-                            () -> {
-                              elevator.setElevatorPosition(Constants.Presets.liftIntake);
-                              arm.setTargetAngle(
-                                  groundIntake.wanttoPOP
-                                      ? Constants.Presets.armGroundTransferWithPop
-                                      : Constants.Presets.armGroundTransfer,
-                                  0);
-                              drive.coralIntededforL1 = false;
-                              AutoAlignDesitationDeterminer.placingAtL1 = false;
-                            }),
-                        new WaitUntilCommand(
-                            () -> {
-                              return SeanMathUtil.compareArmPosition(
-                                      arm.getPosition(),
+                                  arm.setTargetAngle(Constants.Presets.armSafePosition, 0);
+                                  groundIntake.setIntakePosition(
+                                      Constants.Presets.groundIntakeIntake);
+                                }),
+                            new WaitUntilCommand(
+                                () -> {
+                                  return SeanMathUtil.comparePosition(
+                                      groundIntake.getPivotPosition(),
+                                      Constants.Presets.groundIntakeIntake,
+                                      0.15);
+                                }),
+                            new InstantCommand(
+                                () -> {
+                                  elevator.setElevatorPosition(Constants.Presets.liftIntake);
+                                  arm.setTargetAngle(
                                       groundIntake.wanttoPOP
                                           ? Constants.Presets.armGroundTransferWithPop
                                           : Constants.Presets.armGroundTransfer,
-                                      0.05)
-                                  && SeanMathUtil.comparePosition(
-                                      elevator.getTicks(), Constants.Presets.liftIntake, 5);
-                            }),
-                        new InstantCommand(
-                            () -> {
-                              groundIntake.setIntakePower(-0.85, 0.85);
-                            }))
-                    .schedule();
+                                      0);
+                                  drive.coralIntededforL1 = false;
+                                  AutoAlignDesitationDeterminer.placingAtL1 = false;
+                                }),
+                            new WaitUntilCommand(
+                                () -> {
+                                  return SeanMathUtil.compareArmPosition(
+                                          arm.getPosition(),
+                                          groundIntake.wanttoPOP
+                                              ? Constants.Presets.armGroundTransferWithPop
+                                              : Constants.Presets.armGroundTransfer,
+                                          0.05)
+                                      && SeanMathUtil.comparePosition(
+                                          elevator.getTicks(), Constants.Presets.liftIntake, 5);
+                                }),
+                            new InstantCommand(
+                                () -> {
+                                  groundIntake.setIntakePower(-0.85, 0.85);
+                                })));
               } else {
-                Commands.sequence(
-                        leds.setPattern(LEDLightPattern.INTAKING),
-                        new InstantCommand(
-                            () -> {
-                              arm.groundIntaking = true;
-                              if (arm.getTargetPosition()
-                                  == Constants.Presets.armIntakeAlt
-                                      + Constants.Presets.globalArmOffset) {
-                                elevator.setElevatorPosition(Constants.Presets.liftOuttakeL2);
-                                // Constants.Presets.defenseDelay = 2;
-                              } else {
-                                elevator.setElevatorPosition(Constants.Presets.liftIntake);
-                                // Constants.Presets.defenseDelay = 0;
-                              }
+                CommandScheduler.getInstance()
+                    .schedule(
+                        Commands.sequence(
+                            leds.setPattern(LEDLightPattern.INTAKING),
+                            new InstantCommand(
+                                () -> {
+                                  arm.groundIntaking = true;
+                                  if (arm.getTargetPosition()
+                                      == Constants.Presets.armIntakeAlt
+                                          + Constants.Presets.globalArmOffset) {
+                                    elevator.setElevatorPosition(Constants.Presets.liftOuttakeL2);
+                                    // Constants.Presets.defenseDelay = 2;
+                                  } else {
+                                    elevator.setElevatorPosition(Constants.Presets.liftIntake);
+                                    // Constants.Presets.defenseDelay = 0;
+                                  }
 
-                              arm.setTargetAngle(Constants.Presets.armSafePosition, 0);
-                              groundIntake.setIntakePosition(Constants.Presets.groundIntakeIntake);
-                            }),
-                        new WaitUntilCommand(
-                            () -> {
-                              return SeanMathUtil.comparePosition(
-                                  groundIntake.getPivotPosition(),
-                                  Constants.Presets.groundIntakeIntake,
-                                  0.15);
-                            }),
-                        new InstantCommand(
-                            () -> {
-                              elevator.setElevatorPosition(Constants.Presets.liftIntake);
-                              arm.setTargetAngle(
-                                  groundIntake.wanttoPOP
-                                      ? Constants.Presets.armGroundTransferWithPop
-                                      : Constants.Presets.armGroundTransfer,
-                                  0);
-                              drive.coralIntededforL1 = false;
-                              AutoAlignDesitationDeterminer.placingAtL1 = false;
-                            }),
-                        new WaitUntilCommand(
-                            () -> {
-                              return SeanMathUtil.compareArmPosition(
-                                      arm.getPosition(),
+                                  arm.setTargetAngle(Constants.Presets.armSafePosition, 0);
+                                  groundIntake.setIntakePosition(
+                                      Constants.Presets.groundIntakeIntake);
+                                }),
+                            new WaitUntilCommand(
+                                () -> {
+                                  return SeanMathUtil.comparePosition(
+                                      groundIntake.getPivotPosition(),
+                                      Constants.Presets.groundIntakeIntake,
+                                      0.15);
+                                }),
+                            new InstantCommand(
+                                () -> {
+                                  elevator.setElevatorPosition(Constants.Presets.liftIntake);
+                                  arm.setTargetAngle(
                                       groundIntake.wanttoPOP
                                           ? Constants.Presets.armGroundTransferWithPop
                                           : Constants.Presets.armGroundTransfer,
-                                      0.05)
-                                  && SeanMathUtil.comparePosition(
-                                      elevator.getTicks(), Constants.Presets.liftIntake, 5);
-                            }),
-                        new InstantCommand(
-                            () -> {
-                              groundIntake.setIntakePower(-0.85, 0.85);
-                            }))
-                    .schedule();
+                                      0);
+                                  drive.coralIntededforL1 = false;
+                                  AutoAlignDesitationDeterminer.placingAtL1 = false;
+                                }),
+                            new WaitUntilCommand(
+                                () -> {
+                                  return SeanMathUtil.compareArmPosition(
+                                          arm.getPosition(),
+                                          groundIntake.wanttoPOP
+                                              ? Constants.Presets.armGroundTransferWithPop
+                                              : Constants.Presets.armGroundTransfer,
+                                          0.05)
+                                      && SeanMathUtil.comparePosition(
+                                          elevator.getTicks(), Constants.Presets.liftIntake, 5);
+                                }),
+                            new InstantCommand(
+                                () -> {
+                                  groundIntake.setIntakePower(-0.85, 0.85);
+                                })));
               }
-              Commands.sequence(
-                      new WaitUntilCommand(
-                          () -> {
-                            return groundIntake.getDistanceSensorTripped();
-                          }),
-                      new InstantCommand(
-                          () -> {
-                            if (OI.activateGroundIntake().getAsBoolean()) {
-                              leds.setPattern(LEDLightPattern.HAS_GAMEPIECE).schedule();
-                            }
-                          }))
-                  .schedule();
+              CommandScheduler.getInstance()
+                  .schedule(
+                      Commands.sequence(
+                          new WaitUntilCommand(
+                              () -> {
+                                return groundIntake.getDistanceSensorTripped();
+                              }),
+                          new InstantCommand(
+                              () -> {
+                                if (OI.activateGroundIntake().getAsBoolean()) {
+                                  CommandScheduler.getInstance()
+                                      .schedule(leds.setPattern(LEDLightPattern.HAS_GAMEPIECE));
+                                }
+                              })));
             });
 
     OI.activateGroundIntake()
@@ -1161,40 +1173,42 @@ public class RobotContainer {
             () -> {
               System.out.println(
                   "Ground Intake Deactivated ---------------------------------------------------------------------");
-              Commands.sequence(
-                      new InstantCommand(
-                          () -> {
-                            elevator.setElevatorPosition(Constants.Presets.liftIntake);
-                            groundIntake.setIntakePower(0, 0);
-                            if (Constants.DRIVE_MODE != DriveMode.DEMO
-                                && Constants.DRIVE_MODE != DriveMode.DEMO_AUTOALIGN) {
-                              arm.setTargetAngle(Constants.Presets.armSafePosition, 0);
-                            }
-                          }),
-                      new WaitUntilCommand(
-                          () -> {
-                            return Constants.DRIVE_MODE == DriveMode.DEMO
-                                || Constants.DRIVE_MODE == DriveMode.DEMO_AUTOALIGN
-                                || SeanMathUtil.compareArmPosition(
-                                    arm.getPosition(), Constants.Presets.armSafePosition, 0.07);
-                          }),
-                      new InstantCommand(
-                          () -> {
-                            System.out.println(groundIntake.hoverPosition);
-                            groundIntake.setIntakePosition(
-                                (Constants.DRIVE_MODE == DriveMode.DEMO
-                                        || Constants.DRIVE_MODE == DriveMode.DEMO_AUTOALIGN)
-                                    ? Constants.Presets.groundIntakeHover
-                                    : groundIntake.hoverPosition);
-                            arm.groundIntaking = false;
-                          }),
-                      new InstantCommand(
-                          () -> {
-                            if (leds.getPattern() != LEDLightPattern.HAS_GAMEPIECE) {
-                              leds.setPattern(LEDLightPattern.NONE).schedule();
-                            }
-                          }))
-                  .schedule();
+              CommandScheduler.getInstance()
+                  .schedule(
+                      Commands.sequence(
+                          new InstantCommand(
+                              () -> {
+                                elevator.setElevatorPosition(Constants.Presets.liftIntake);
+                                groundIntake.setIntakePower(0, 0);
+                                if (Constants.DRIVE_MODE != DriveMode.DEMO
+                                    && Constants.DRIVE_MODE != DriveMode.DEMO_AUTOALIGN) {
+                                  arm.setTargetAngle(Constants.Presets.armSafePosition, 0);
+                                }
+                              }),
+                          new WaitUntilCommand(
+                              () -> {
+                                return Constants.DRIVE_MODE == DriveMode.DEMO
+                                    || Constants.DRIVE_MODE == DriveMode.DEMO_AUTOALIGN
+                                    || SeanMathUtil.compareArmPosition(
+                                        arm.getPosition(), Constants.Presets.armSafePosition, 0.07);
+                              }),
+                          new InstantCommand(
+                              () -> {
+                                System.out.println(groundIntake.hoverPosition);
+                                groundIntake.setIntakePosition(
+                                    (Constants.DRIVE_MODE == DriveMode.DEMO
+                                            || Constants.DRIVE_MODE == DriveMode.DEMO_AUTOALIGN)
+                                        ? Constants.Presets.groundIntakeHover
+                                        : groundIntake.hoverPosition);
+                                arm.groundIntaking = false;
+                              }),
+                          new InstantCommand(
+                              () -> {
+                                if (leds.getPattern() != LEDLightPattern.HAS_GAMEPIECE) {
+                                  CommandScheduler.getInstance()
+                                      .schedule(leds.setPattern(LEDLightPattern.NONE));
+                                }
+                              })));
             });
 
     OI.L1GroundIntake()
@@ -1220,11 +1234,12 @@ public class RobotContainer {
                       new InstantCommand(
                           () -> {
                             if (OI.L1GroundIntake().getAsBoolean()) {
-                              leds.setPattern(LEDLightPattern.HAS_GAMEPIECE).schedule();
+                              CommandScheduler.getInstance()
+                                  .schedule(leds.setPattern(LEDLightPattern.HAS_GAMEPIECE));
                             }
                           }));
               if (!arm.groundIntaking) {
-                l1gIntake.schedule();
+                CommandScheduler.getInstance().schedule(l1gIntake);
               } else {
                 arm.bufferedCommand = l1gIntake;
               }
@@ -1247,12 +1262,13 @@ public class RobotContainer {
                       new InstantCommand(
                           () -> {
                             if (leds.getPattern() != LEDLightPattern.HAS_GAMEPIECE) {
-                              leds.setPattern(LEDLightPattern.NONE).schedule();
+                              CommandScheduler.getInstance()
+                                  .schedule(leds.setPattern(LEDLightPattern.NONE));
                             }
                           }));
 
               if (!arm.groundIntaking) {
-                l1gItnake.schedule();
+                CommandScheduler.getInstance().schedule(l1gItnake);
               } else {
                 arm.bufferedCommand = l1gItnake;
               }
@@ -1275,12 +1291,13 @@ public class RobotContainer {
                       new InstantCommand(
                           () -> {
                             if (leds.getPattern() != LEDLightPattern.HAS_GAMEPIECE) {
-                              leds.setPattern(LEDLightPattern.NONE).schedule();
+                              CommandScheduler.getInstance()
+                                  .schedule(leds.setPattern(LEDLightPattern.NONE));
                             }
                           }));
 
               if (!arm.groundIntaking) {
-                l1GroundIntakeHigh.schedule();
+                CommandScheduler.getInstance().schedule(l1GroundIntakeHigh);
               } else {
                 arm.bufferedCommand = l1GroundIntakeHigh;
               }
@@ -1296,42 +1313,43 @@ public class RobotContainer {
         .rising()
         .ifHigh(
             () -> {
-              Commands.sequence(
-                      leds.setPattern(LEDLightPattern.DEPOSITED),
-                      new WaitUntilCommand(
-                          () ->
-                              !SeanMathUtil.compareArmPosition(
-                                  arm.getPosition(),
-                                  groundIntake.wanttoPOP
-                                      ? Constants.Presets.armGroundTransferWithPop
-                                      : Constants.Presets.armGroundTransfer,
-                                  0.1)),
-                      new InstantCommand(
-                          () -> {
-                            groundIntake.setIntakePosition(Constants.Presets.groundIntakeL1);
-                            groundIntake.setIntakeCUrrentlim(60);
-                          }),
-                      new WaitUntilCommand(
-                          () ->
-                              SeanMathUtil.comparePosition(
-                                  groundIntake.getPivotPosition(),
-                                  Constants.Presets.groundIntakeL1,
-                                  0.05)),
-                      new InstantCommand(
-                          () -> {
-                            groundIntake.setIntakePower(0.25, -0.25);
-                          }),
-                      new WaitCommand(0.0),
-                      new InstantCommand(
-                          () -> {
-                            groundIntake.setIntakePosition(Constants.Presets.groundIntakeJerk);
-                          }),
-                      new WaitCommand(0.3),
-                      new InstantCommand(
-                          () -> {
-                            groundIntake.setIntakeCUrrentlim(45);
-                          }))
-                  .schedule();
+              CommandScheduler.getInstance()
+                  .schedule(
+                      Commands.sequence(
+                          leds.setPattern(LEDLightPattern.DEPOSITED),
+                          new WaitUntilCommand(
+                              () ->
+                                  !SeanMathUtil.compareArmPosition(
+                                      arm.getPosition(),
+                                      groundIntake.wanttoPOP
+                                          ? Constants.Presets.armGroundTransferWithPop
+                                          : Constants.Presets.armGroundTransfer,
+                                      0.1)),
+                          new InstantCommand(
+                              () -> {
+                                groundIntake.setIntakePosition(Constants.Presets.groundIntakeL1);
+                                groundIntake.setIntakeCUrrentlim(60);
+                              }),
+                          new WaitUntilCommand(
+                              () ->
+                                  SeanMathUtil.comparePosition(
+                                      groundIntake.getPivotPosition(),
+                                      Constants.Presets.groundIntakeL1,
+                                      0.05)),
+                          new InstantCommand(
+                              () -> {
+                                groundIntake.setIntakePower(0.25, -0.25);
+                              }),
+                          new WaitCommand(0.0),
+                          new InstantCommand(
+                              () -> {
+                                groundIntake.setIntakePosition(Constants.Presets.groundIntakeJerk);
+                              }),
+                          new WaitCommand(0.3),
+                          new InstantCommand(
+                              () -> {
+                                groundIntake.setIntakeCUrrentlim(45);
+                              })));
             });
     OI.groundIntakeOuttake()
         .or(
@@ -1344,7 +1362,7 @@ public class RobotContainer {
         .ifHigh(
             () -> {
               groundIntake.setIntakePower(0, 0);
-              leds.setPattern(LEDLightPattern.NONE).schedule();
+              CommandScheduler.getInstance().schedule(leds.setPattern(LEDLightPattern.NONE));
             });
     OI.groundIntakeIntake()
         .rising()
@@ -1363,7 +1381,7 @@ public class RobotContainer {
         .ifHigh(
             () -> {
               groundIntake.setIntakePower(1.0, 0);
-              leds.setPattern(LEDLightPattern.NONE).schedule();
+              CommandScheduler.getInstance().schedule(leds.setPattern(LEDLightPattern.NONE));
             });
     OI.groundIntakeManualOut()
         .falling()
@@ -1381,18 +1399,19 @@ public class RobotContainer {
         .rising()
         .ifHigh(
             () -> {
-              new InstantCommand(
-                      () -> {
-                        if (!SeanMathUtil.comparePosition(
-                            arm.getPosition(),
-                            groundIntake.wanttoPOP
-                                ? Constants.Presets.armGroundTransferWithPop
-                                : Constants.Presets.armGroundTransfer,
-                            0.1)) {
-                          groundIntake.setIntakePosition(Constants.Presets.groundIntakeJerk);
-                        }
-                      })
-                  .schedule();
+              CommandScheduler.getInstance()
+                  .schedule(
+                      new InstantCommand(
+                          () -> {
+                            if (!SeanMathUtil.comparePosition(
+                                arm.getPosition(),
+                                groundIntake.wanttoPOP
+                                    ? Constants.Presets.armGroundTransferWithPop
+                                    : Constants.Presets.armGroundTransfer,
+                                0.1)) {
+                              groundIntake.setIntakePosition(Constants.Presets.groundIntakeJerk);
+                            }
+                          }));
             });
     // LOW INTAKE======================
     // OI.lowIntake().falling().ifHigh(()->{
@@ -1412,42 +1431,44 @@ public class RobotContainer {
         .rising()
         .ifHigh(
             () -> {
-              Commands.sequence(
-                      new InstantCommand(
-                          () -> {
-                            elevator.setElevatorPosition(Constants.Presets.liftOuttakeL3);
-                          }),
-                      new WaitCommand(0.5),
-                      new InstantCommand(
-                          () -> {
-                            arm.setTargetAngle(Constants.Presets.armBargeStore, 0);
-                          }))
-                  .schedule();
+              CommandScheduler.getInstance()
+                  .schedule(
+                      Commands.sequence(
+                          new InstantCommand(
+                              () -> {
+                                elevator.setElevatorPosition(Constants.Presets.liftOuttakeL3);
+                              }),
+                          new WaitCommand(0.5),
+                          new InstantCommand(
+                              () -> {
+                                arm.setTargetAngle(Constants.Presets.armBargeStore, 0);
+                              })));
             });
     OI.bargeYeet()
         .rising()
         .ifHigh(
             () -> {
-              Commands.sequence(
-                      robotCommands.barge(),
-                      new WaitCommand(1),
-                      new InstantCommand(
-                          () -> {
-                            intake.setSpeed(0);
-                          }),
-                      robotCommands.store())
-                  .schedule();
+              CommandScheduler.getInstance()
+                  .schedule(
+                      Commands.sequence(
+                          robotCommands.barge(),
+                          new WaitCommand(1),
+                          new InstantCommand(
+                              () -> {
+                                intake.setSpeed(0);
+                              }),
+                          robotCommands.store()));
             });
 
     // OI.ClimbStage0().rising().ifHigh(()->{
-    //     Commands.sequence(
+    //   CommandScheduler.getInstance().schedule(  Commands.sequence(
     //         new PrintCommand("UNOVERCENTERING------------------"),
     //         new InstantCommand(()->{climber.setMotorPower(0.3);}),
     //         new WaitCommand(0.7),
     //         new InstantCommand(()->{climber.setMotorPower(-0.4);}),
     //         new WaitCommand(0.4),
     //         new InstantCommand(()->{climber.setMotorPower(0);})
-    //     ).schedule();
+    //     ));
     //     //climber.setTargetAngle(Constants.Presets.climberStage0, 0);
     // });
 
@@ -1455,97 +1476,102 @@ public class RobotContainer {
         .rising()
         .ifHigh(
             () -> {
-              Commands.sequence(
-                      new InstantCommand(
-                          () -> {
-                            elevator.setElevatorPosition(Constants.Presets.liftClimb);
-                            arm.setTargetAngle(Constants.Presets.armClimb, 0);
-                            groundIntake.setIntakePosition(Constants.Presets.groundIntakeHover);
-                          }),
-                      new WaitUntilCommand(
-                          () -> elevator.getTicks() >= (Constants.Presets.liftClimb - 2.0)),
-                      new InstantCommand(
-                          () -> {
-                            climber.setTargetAngle(0, 0);
-                          }))
-                  .ignoringDisable(false)
-                  .schedule();
+              CommandScheduler.getInstance()
+                  .schedule(
+                      Commands.sequence(
+                              new InstantCommand(
+                                  () -> {
+                                    elevator.setElevatorPosition(Constants.Presets.liftClimb);
+                                    arm.setTargetAngle(Constants.Presets.armClimb, 0);
+                                    groundIntake.setIntakePosition(
+                                        Constants.Presets.groundIntakeHover);
+                                  }),
+                              new WaitUntilCommand(
+                                  () -> elevator.getTicks() >= (Constants.Presets.liftClimb - 2.0)),
+                              new InstantCommand(
+                                  () -> {
+                                    climber.setTargetAngle(0, 0);
+                                  }))
+                          .ignoringDisable(false));
             });
 
     OI.ClimbStage1()
         .rising()
         .ifHigh(
             () -> {
-              new InstantCommand(
-                      () -> {
-                        climber.setCurrentLimit(20);
-                        climber.setTargetAngle(Constants.Presets.climberStage1, 0);
-                      })
-                  .ignoringDisable(false)
-                  .schedule();
+              CommandScheduler.getInstance()
+                  .schedule(
+                      new InstantCommand(
+                              () -> {
+                                climber.setCurrentLimit(20);
+                                climber.setTargetAngle(Constants.Presets.climberStage1, 0);
+                              })
+                          .ignoringDisable(false));
             });
 
     OI.ClimbStage2()
         .rising()
         .ifHigh(
             () -> {
-              Commands.sequence(
-                      new InstantCommand(
-                          () -> {
-                            climber.setMotorBreak();
-                          }),
-                      new InstantCommand(
-                          () -> {
-                            climber.setCurrentLimit(80);
-                          }),
-                      new InstantCommand(
-                          () -> {
-                            climber.setTargetAngle(Constants.Presets.climberStage2, 0);
-                          }),
-                      new WaitCommand(1.5),
-                      new InstantCommand(
-                          () -> {
-                            climber.setCurrentLimit(70);
-                          }),
-                      new WaitCommand(0.1),
-                      new InstantCommand(
-                          () -> {
-                            climber.setCurrentLimit(60);
-                          }),
-                      new WaitCommand(0.1),
-                      new InstantCommand(
-                          () -> {
-                            climber.setCurrentLimit(50);
-                          }),
-                      new WaitCommand(0.1),
-                      new InstantCommand(
-                          () -> {
-                            climber.setCurrentLimit(40);
-                          }),
-                      new WaitCommand(0.1),
-                      new InstantCommand(
-                          () -> {
-                            climber.setCurrentLimit(20);
-                          }),
-                      new WaitCommand(0.1),
-                      new InstantCommand(
-                          () -> {
-                            climber.setCurrentLimit(0);
-                          }))
-                  .ignoringDisable(false)
-                  .schedule();
+              CommandScheduler.getInstance()
+                  .schedule(
+                      Commands.sequence(
+                              new InstantCommand(
+                                  () -> {
+                                    climber.setMotorBreak();
+                                  }),
+                              new InstantCommand(
+                                  () -> {
+                                    climber.setCurrentLimit(80);
+                                  }),
+                              new InstantCommand(
+                                  () -> {
+                                    climber.setTargetAngle(Constants.Presets.climberStage2, 0);
+                                  }),
+                              new WaitCommand(1.5),
+                              new InstantCommand(
+                                  () -> {
+                                    climber.setCurrentLimit(70);
+                                  }),
+                              new WaitCommand(0.1),
+                              new InstantCommand(
+                                  () -> {
+                                    climber.setCurrentLimit(60);
+                                  }),
+                              new WaitCommand(0.1),
+                              new InstantCommand(
+                                  () -> {
+                                    climber.setCurrentLimit(50);
+                                  }),
+                              new WaitCommand(0.1),
+                              new InstantCommand(
+                                  () -> {
+                                    climber.setCurrentLimit(40);
+                                  }),
+                              new WaitCommand(0.1),
+                              new InstantCommand(
+                                  () -> {
+                                    climber.setCurrentLimit(20);
+                                  }),
+                              new WaitCommand(0.1),
+                              new InstantCommand(
+                                  () -> {
+                                    climber.setCurrentLimit(0);
+                                  }))
+                          .ignoringDisable(false));
             });
 
     OI.climberHover()
         .rising()
         .ifHigh(
             () -> {
-              new InstantCommand(
-                      () -> {
-                        climber.setTargetAngle(Constants.Presets.climberHover, 0);
-                      })
-                  .ignoringDisable(false)
-                  .schedule();
+              CommandScheduler.getInstance()
+                  .schedule(
+                      new InstantCommand(
+                              () -> {
+                                climber.setTargetAngle(Constants.Presets.climberHover, 0);
+                              })
+                          .ignoringDisable(false));
             });
   }
 

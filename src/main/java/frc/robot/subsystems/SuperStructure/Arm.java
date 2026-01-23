@@ -1,10 +1,10 @@
 package frc.robot.subsystems.SuperStructure;
 
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -65,7 +65,7 @@ public class Arm extends SubsystemBase {
 
     // armMotor
     //     .getClosedLoopController()
-    //     .setReference(
+    //     .setSetpoint(
     //         ticks + Constants.Presets.globalArmOffset,
     //         SparkMax.ControlType.kPosition,
     //         ClosedLoopSlot.kSlot0);
