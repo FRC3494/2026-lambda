@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 11.896,
+        "y": 4.071
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 10.896,
+        "y": 4.071
+      },
+      "isLocked": false,
+      "linkedName": "Middle-Barge-Red-AlgeaGrab"
+    },
+    {
+      "anchor": {
+        "x": 10.155,
+        "y": 2.652
+      },
+      "prevControl": {
+        "x": 10.221035985411138,
+        "y": 3.4077062266787204
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Middle-Barge-Red-Barge"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 1.5,
+    "maxAcceleration": 1.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 150.3
+  },
+  "reversed": false,
+  "folder": "Middle-Side",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -89.43600000000004
+  },
+  "useDefaultConstraints": false
+}
