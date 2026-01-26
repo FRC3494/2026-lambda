@@ -45,13 +45,13 @@ public class GroundIntake extends SubsystemBase {
     frontIntakeMotor = new SparkMax(Constants.GroundIntake.frontIntakeMotor, MotorType.kBrushless);
     backIntakeMotor = new SparkMax(Constants.GroundIntake.backIntakeMotor, MotorType.kBrushless);
 
-    targetPosition = pivotMotor.getAbsoluteEncoder().getPosition();
     pivotMotorConfig = new SparkFlexConfig();
     frontIntakeMotorConfig = new SparkMaxConfig();
     backIntakeMotorConfig = new SparkMaxConfig();
 
     pivotMotorConfig.smartCurrentLimit(45);
     pivotMotorConfig.inverted(false);
+    pivotMotorConfig.absoluteEncoder.zeroOffset(Constants.GroundIntake.pivotEncoderOffset);
     pivotController = new PIDController(4.6, 0, 0);
 
     pivotController.setSetpoint(getPivotPosition());
@@ -80,6 +80,8 @@ public class GroundIntake extends SubsystemBase {
         frontIntakeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     backIntakeMotor.configure(
         backIntakeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    targetPosition = pivotMotor.getAbsoluteEncoder().getPosition();
 
     // Configure time of flight sensor for short ranging mode and sample
     // distance every 40 ms

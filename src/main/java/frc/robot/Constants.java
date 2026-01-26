@@ -150,6 +150,8 @@ public final class Constants {
     public static double downPIDRange = 0.7;
 
     public static double safePosition = 0.114;
+
+    public static double pivotEncoderOffset = 0.22331426;
   }
 
   public static class Arm {
