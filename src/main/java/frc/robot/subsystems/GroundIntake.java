@@ -4,6 +4,7 @@ import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -86,7 +87,7 @@ public class GroundIntake extends SubsystemBase {
   }
 
   public void setIntakePosition(double position) {
-    // pivotMotor.getClosedLoopController().setSetpoint(position, SparkBase.ControlType.kPosition);
+    pivotMotor.getClosedLoopController().setSetpoint(position, ControlType.kPosition);
     pivotController.setSetpoint(position);
     targetPosition = position;
   }

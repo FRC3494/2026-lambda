@@ -2,7 +2,9 @@ package frc.robot.subsystems.SuperStructure;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -59,16 +61,16 @@ public class Arm extends SubsystemBase {
   }
 
   public void setTargetAngle(double ticks, double arbFFVoltage) {
-    // targetPosition = ticks + Constants.Presets.globalArmOffset;
+    targetPosition = ticks + Constants.Presets.globalArmOffset;
 
     if (targetPosition < 0) {}
 
-    // armMotor
-    //     .getClosedLoopController()
-    //     .setSetpoint(
-    //         ticks + Constants.Presets.globalArmOffset,
-    //         SparkMax.ControlType.kPosition,
-    //         ClosedLoopSlot.kSlot0);
+    armMotor
+        .getClosedLoopController()
+        .setSetpoint(
+            ticks + Constants.Presets.globalArmOffset,
+            ControlType.kPosition,
+            ClosedLoopSlot.kSlot0);
   }
 
   public void setPID(double p, double i, double d) {
