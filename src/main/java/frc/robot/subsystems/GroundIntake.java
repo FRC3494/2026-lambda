@@ -153,9 +153,11 @@ public class GroundIntake extends SubsystemBase {
 
     Logger.recordOutput("Ground-Intake/Front-Power", frontIntakeMotor.getAppliedOutput());
     Logger.recordOutput("Ground-Intake/Front-Current", frontIntakeMotor.getOutputCurrent());
+    Logger.recordOutput("Ground-Intake/Front-Temp", frontIntakeMotor.getMotorTemperature());
 
     Logger.recordOutput("Ground-Intake/Back-Power", backIntakeMotor.getAppliedOutput());
     Logger.recordOutput("Ground-Intake/Back-Current", backIntakeMotor.getOutputCurrent());
+    Logger.recordOutput("Ground-Intake/Back-Temp", backIntakeMotor.getMotorTemperature());
 
     if (targetPosition == Constants.Presets.groundIntakeIntake
         && getDistanceSensorTripped()
