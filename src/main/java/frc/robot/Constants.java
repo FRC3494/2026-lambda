@@ -200,8 +200,8 @@ public final class Constants {
       return Math.hypot(trackWidthX / 2.0, trackWidthY / 2.0);
     }
 
-    public static final double trackWidthX = 0.5222; // TODO: random Number
-    public static final double trackWidthY = 0.574675;
+    public static final double trackWidthX = Units.inchesToMeters(20.75); // TODO: random Number
+    public static final double trackWidthY = Units.inchesToMeters(20.75);
 
     public static double getMaxLinearVelocity() {
       return switch (DRIVE_MODE) {
